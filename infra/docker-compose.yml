@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+  api:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ../:/app
+    command: bash -lc "pip install -r requirements.txt && uvicorn backend.main:app --host 0.0.0.0 --port 8000"
+    env_file:
+      - .env.example
+    depends_on:
+      - redis
+      - postgres
+
+  frontend:
+    image: node:20
+    working_dir: /app/frontend
+    volumes:
+      - ../frontend:/app/frontend
+    command: bash -lc "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+
+  redis:
+    image: redis:7
+    ports: ['6379:6379']
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: quant
+      POSTGRES_PASSWORD: quant
+      POSTGRES_DB: quant
+    ports: ['5432:5432']
+
+  nginx:
+    image: nginx:stable
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports: ['80:80']
+    depends_on:
+      - api
+      - frontend
