@@ -1,0 +1,8 @@
+# Heavy ML stack: needed only for experimental/ scripts, FinBERT sentiment,
+# and PPO inference. The core API boots and serves without it.
+-r requirements.txt
+torch==2.4.1
+gymnasium==0.29.1
+stable-baselines3==2.3.2
+transformers==4.45.1
+pandas-ta==0.3.14b0
