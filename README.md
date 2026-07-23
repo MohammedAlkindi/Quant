@@ -120,8 +120,8 @@ No claim is made that this signal has predictive value. It has never been backte
 | `GET /api/history/{ticker}` | yfinance OHLCV (auto-adjusted) |
 | `POST /api/signal/predict` | The heuristic signal above |
 | `GET /api/anomaly/{ticker}` | Runs the full signal pipeline, returns only the anomaly flags |
-| `POST /api/trade/execute` | Alpaca market order — read the safety warning |
-| `GET /api/portfolio` | Alpaca account equity, cash, positions |
+| `POST /api/trade/execute` | Alpaca market order — read the safety warning; needs the broker overlay installed |
+| `GET /api/portfolio` | Alpaca account equity, cash, positions; needs the broker overlay installed |
 | `POST /api/analyze` | Claude commentary on a signal payload |
 | `POST /api/explain` | Claude commentary on an arbitrary client-supplied context dict |
 
@@ -135,11 +135,19 @@ Backend, locally (Python 3.11+):
 ```bash
 python -m venv .venv
 .venv/Scripts/activate          # Windows; use .venv/bin/activate on Unix
-pip install -r requirements.txt # core API deps; add -r requirements-ml.txt for FinBERT/PPO
+pip install -r requirements.txt # core API deps
 pip install -e ".[dev]"         # quant research package + pytest + ruff
 cp .env.example .env            # then fill in the keys you have
 uvicorn backend.main:app --reload
 ```
+
+Optional overlays:
+
+- **Broker** (`/trade`, `/portfolio`): `pip install -r requirements-broker.txt` then
+  `pip install --no-deps alpaca-trade-api==3.2.0`. The two-step dance exists because the
+  deprecated Alpaca SDK pins `websockets<11` while modern yfinance needs `>=13`; the file
+  header documents it.
+- **ML** (`FinBERT`, PPO, `experimental/`): `pip install -r requirements-ml.txt`.
 
 Notes:
 
