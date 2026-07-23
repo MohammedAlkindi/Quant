@@ -1,9 +1,8 @@
-from pathlib import Path
 import json
+from pathlib import Path
 
 from backend.config import get_settings
 from backend.data.yfinance import fetch_history
-
 
 if __name__ == '__main__':
     settings = get_settings()
