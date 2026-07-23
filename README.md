@@ -205,7 +205,12 @@ pytest          # runs everything under tests/
 ruff check .    # lint
 ```
 
-GitHub Actions runs both on every push and pull request
+Coverage: backtest accounting against hand-computed fixtures (delayed fills, per-side
+costs, no-negative-cash, leverage/short rejection), portfolio math (Sharpe, drawdown,
+turnover, CAGR), strategy signals, the live heuristic signal (blend weights, thresholds,
+the anomaly-damping quirk, keyless degeneration), data validation, and a golden test that
+pins the README's backtest table to the committed data. GitHub Actions runs lint and the
+full suite on every push and pull request
 ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). Deterministic randomness goes
 through `quant.seeds.set_seed`.
 
@@ -218,4 +223,4 @@ through `quant.seeds.set_seed`.
 5. ~~A `quant/` research package: buy-and-hold and moving-average-crossover baselines through
    a backtest that charges commissions, spread, and slippage, executes with a one-day delay,
    and reports out-of-sample Sharpe, max drawdown, turnover, and total return against SPY~~
-6. Tests for backtest accounting, signal calculation, and portfolio math
+6. ~~Tests for backtest accounting, signal calculation, and portfolio math~~
