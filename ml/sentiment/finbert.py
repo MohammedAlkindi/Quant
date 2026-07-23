@@ -1,15 +1,22 @@
-from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
+from functools import lru_cache
 
 MODEL_NAME = 'ProsusAI/finbert'
-_tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
-_model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
-_classifier = pipeline('sentiment-analysis', model=_model, tokenizer=_tokenizer)
+
+
+@lru_cache(maxsize=1)
+def _get_classifier():
+    # Loaded lazily: the ~440 MB model download and torch import must not block API boot.
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
+
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
+    return pipeline('sentiment-analysis', model=model, tokenizer=tokenizer)
 
 
 def score_headlines(headlines: list[str]) -> list[float]:
     if not headlines:
         return [0.0]
-    out = _classifier(headlines, truncation=True)
+    out = _get_classifier()(headlines, truncation=True)
     scores = []
     for item in out:
         label = item['label'].lower()
