@@ -171,6 +171,33 @@ Notes:
 | `ALPACA_API_KEY`, `ALPACA_SECRET_KEY`, `ALPACA_BASE_URL` | `/trade`, `/portfolio` — keep the paper URL | alpaca.markets |
 | `ANTHROPIC_API_KEY`, `CLAUDE_MODEL` | `/analyze`, `/explain` | console.anthropic.com |
 
+## Baseline backtest (out of sample)
+
+```bash
+python -m quant.report    # reproduces everything in this section from committed data
+```
+
+Data: `data/SPY.csv` — daily OHLCV, split- and dividend-adjusted (so buy-and-hold
+approximates total return), 1993-01-29 → 2026-07-22, fetched 2026-07-23 with yfinance 1.5.1
+(`scripts/fetch_data.py`). The snapshot is committed, so results reproduce offline;
+refetching shifts adjusted history and therefore the numbers.
+
+Protocol: parameters were selected only on 1993–2019 (MA pair from a 3×3 grid by net
+in-sample Sharpe → 10/200); 2020-01-02 → 2026-07-22 is untouched evaluation data. Signals
+form on the close, fill at the next open, and pay 2 bps per side (0.5 commission + 0.5
+half-spread + 1.0 slippage — deliberately conservative for SPY). Long-only, unlevered,
+fractional shares, $100,000 initial equity, Sharpe at rf=0.
+
+| Strategy | Total return | CAGR | Sharpe (rf=0) | Max drawdown | Turnover/yr | Costs paid | Trades |
+|---|---|---|---|---|---|---|---|
+| SPY buy & hold (benchmark) | +155.26% | +15.44% | 0.81 | −33.72% | 0.10× | $20 | 1 |
+| MA crossover 10/200 | +94.60% | +10.74% | 0.83 | −20.51% | 1.88× | $337 | 13 |
+
+Read it straight: over this window the crossover **underperforms buy-and-hold on total
+return** and wins on drawdown — the standard trend-following tradeoff. No alpha is claimed.
+These are baselines for anything `experimental/` might one day graduate into, and the
+numbers are pinned to the committed data by a golden test.
+
 ## Tests
 
 ```bash
@@ -188,7 +215,7 @@ through `quant.seeds.set_seed`.
 2. ~~Quarantine unwired model code~~ → [`experimental/`](experimental/README.md)
 3. ~~This README~~
 4. ~~Packaging (`pyproject.toml`), ruff, pytest, deterministic seeds, GitHub Actions CI~~
-5. A `quant/` research package: buy-and-hold and moving-average-crossover baselines through
+5. ~~A `quant/` research package: buy-and-hold and moving-average-crossover baselines through
    a backtest that charges commissions, spread, and slippage, executes with a one-day delay,
-   and reports out-of-sample Sharpe, max drawdown, turnover, and total return against SPY
+   and reports out-of-sample Sharpe, max drawdown, turnover, and total return against SPY~~
 6. Tests for backtest accounting, signal calculation, and portfolio math
