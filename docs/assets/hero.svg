@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 280" role="img" aria-label="Quant — a research-first trading scaffold">
+  <title>Quant</title>
+  <rect x="0.5" y="0.5" width="959" height="279" rx="14" fill="#1a1a19" stroke="rgba(255,255,255,0.10)"/>
+
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" text-anchor="middle">
+    <text x="480" y="122" font-size="58" font-weight="700" letter-spacing="1.5" fill="#ffffff">Quant<tspan fill="#d95926">.</tspan></text>
+    <text x="480" y="168" font-size="18" fill="#c3c2b7">A research-first trading scaffold — every claim traceable to code, costs, and out-of-sample runs.</text>
+
+    <line x1="440" y1="200" x2="520" y2="200" stroke="#383835" stroke-width="2"/>
+
+    <text x="480" y="236" font-size="14" fill="#898781">cost-aware backtesting&#160;&#160;&#160;·&#160;&#160;&#160;out-of-sample discipline&#160;&#160;&#160;·&#160;&#160;&#160;CI-tested claims</text>
+  </g>
+</svg>

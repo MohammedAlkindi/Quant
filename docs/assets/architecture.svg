@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 664" role="img" aria-label="Quant architecture: FastAPI service lane, ml signal components, offline quant research lane, quarantined experimental code">
+  <title>Quant architecture — as the code exists</title>
+  <defs>
+    <marker id="aBlue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3987e5"/></marker>
+    <marker id="aGray" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#898781"/></marker>
+    <marker id="aOrange" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#d95926"/></marker>
+  </defs>
+
+  <rect x="0.5" y="0.5" width="959" height="663" rx="14" fill="#1a1a19" stroke="rgba(255,255,255,0.10)"/>
+
+  <g font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+    <text x="28" y="36" font-size="15" font-weight="700" fill="#ffffff">Architecture — as the code exists</text>
+    <text x="932" y="36" font-size="11" fill="#898781" text-anchor="end">v0.1.0</text>
+
+    <!-- left column -->
+    <rect x="30" y="58" width="170" height="44" rx="8" fill="none" stroke="#898781" stroke-dasharray="5 4"/>
+    <text x="115" y="76" font-size="11.5" fill="#c3c2b7" text-anchor="middle">frontend/src</text>
+    <text x="115" y="92" font-size="10.5" fill="#898781" text-anchor="middle">sources only — not buildable</text>
+
+    <rect x="40" y="120" width="120" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="100" y="141" font-size="12" fill="#ffffff" text-anchor="middle">HTTP client</text>
+    <line x1="100" y1="154" x2="100" y2="188" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+    <rect x="40" y="190" width="120" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="100" y="211" font-size="12" fill="#ffffff" text-anchor="middle">nginx :80</text>
+    <line x1="160" y1="207" x2="248" y2="207" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+
+    <!-- backend panel -->
+    <rect x="250" y="58" width="320" height="262" rx="10" fill="#222221" stroke="rgba(255,255,255,0.10)"/>
+    <text x="262" y="78" font-size="11" fill="#898781" letter-spacing="1">BACKEND/ — FASTAPI SERVICE</text>
+
+    <rect x="266" y="92" width="118" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="325" y="113" font-size="12" fill="#ffffff" text-anchor="middle">routes_market</text>
+    <rect x="420" y="92" width="134" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="487" y="113" font-size="12" fill="#ffffff" text-anchor="middle">MarketService</text>
+    <line x1="384" y1="109" x2="418" y2="109" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+
+    <rect x="266" y="148" width="118" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="325" y="169" font-size="12" fill="#ffffff" text-anchor="middle">routes_signal</text>
+    <rect x="420" y="148" width="134" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="487" y="169" font-size="12" fill="#ffffff" text-anchor="middle">SignalService</text>
+    <line x1="384" y1="165" x2="418" y2="165" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+    <line x1="410" y1="148" x2="410" y2="128" stroke="#3987e5" stroke-width="1.2" marker-end="url(#aBlue)"/>
+
+    <rect x="266" y="204" width="118" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="325" y="225" font-size="12" fill="#ffffff" text-anchor="middle">routes_trade</text>
+    <rect x="420" y="204" width="134" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="487" y="225" font-size="12" fill="#ffffff" text-anchor="middle">TradeService</text>
+    <line x1="384" y1="221" x2="418" y2="221" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+
+    <rect x="266" y="260" width="118" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="325" y="281" font-size="12" fill="#ffffff" text-anchor="middle">routes_llm</text>
+    <rect x="420" y="260" width="134" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="487" y="281" font-size="12" fill="#ffffff" text-anchor="middle">LLMService</text>
+    <line x1="384" y1="277" x2="418" y2="277" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+
+    <!-- externals -->
+    <line x1="554" y1="109" x2="600" y2="109" stroke="#3987e5" stroke-width="1.5"/>
+    <line x1="600" y1="83" x2="600" y2="221" stroke="#3987e5" stroke-width="1.5"/>
+    <line x1="600" y1="83" x2="638" y2="83" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+    <line x1="600" y1="129" x2="638" y2="129" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+    <line x1="600" y1="175" x2="638" y2="175" stroke="#898781" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#aGray)"/>
+    <line x1="600" y1="221" x2="638" y2="221" stroke="#898781" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#aGray)"/>
+
+    <rect x="640" y="66" width="280" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="652" y="87" font-size="12" fill="#ffffff">yfinance — always</text>
+    <rect x="640" y="112" width="280" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="652" y="133" font-size="12" fill="#ffffff">Redis — /quote cache, 5&#8201;s TTL</text>
+    <rect x="640" y="158" width="280" height="34" rx="6" fill="none" stroke="#898781" stroke-dasharray="5 4"/>
+    <text x="652" y="179" font-size="12" fill="#c3c2b7">Polygon — if key set</text>
+    <rect x="640" y="204" width="280" height="34" rx="6" fill="none" stroke="#898781" stroke-dasharray="5 4"/>
+    <text x="652" y="225" font-size="12" fill="#c3c2b7">Alpha Vantage — if key set</text>
+
+    <path d="M554,221 L615,221 L615,267 L638,267" fill="none" stroke="#898781" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#aGray)"/>
+    <rect x="640" y="250" width="280" height="34" rx="6" fill="none" stroke="#898781" stroke-dasharray="5 4"/>
+    <text x="652" y="271" font-size="12" fill="#c3c2b7">Alpaca paper API — broker overlay</text>
+
+    <path d="M554,277 L622,277 L622,313 L638,313" fill="none" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+    <rect x="640" y="296" width="280" height="34" rx="6" fill="#2c2c2a"/>
+    <text x="652" y="317" font-size="12" fill="#ffffff">Claude API — /analyze, /explain</text>
+
+    <!-- ml panel -->
+    <path d="M420,165 L402,165 L402,338" fill="none" stroke="#3987e5" stroke-width="1.5" marker-end="url(#aBlue)"/>
+    <rect x="250" y="340" width="320" height="150" rx="10" fill="#222221" stroke="rgba(255,255,255,0.10)"/>
+    <text x="262" y="360" font-size="11" fill="#898781" letter-spacing="1">ML/ — WIRED SIGNAL COMPONENTS</text>
+
+    <rect x="266" y="372" width="288" height="30" rx="6" fill="#2c2c2a"/>
+    <text x="410" y="391" font-size="11.5" fill="#ffffff" text-anchor="middle">anomaly detector — z-score + IsolationForest</text>
+    <rect x="266" y="410" width="288" height="30" rx="6" fill="none" stroke="#898781" stroke-dasharray="5 4"/>
+    <text x="410" y="429" font-size="11.5" fill="#c3c2b7" text-anchor="middle">PPO hook — inert: no checkpoint ships</text>
+    <rect x="266" y="448" width="288" height="30" rx="6" fill="none" stroke="#898781" stroke-dasharray="5 4"/>
+    <text x="410" y="467" font-size="11.5" fill="#c3c2b7" text-anchor="middle">FinBERT sentiment — needs AV key</text>
+    <path d="M554,463 L612,463 L612,240 L638,231" fill="none" stroke="#898781" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#aGray)"/>
+
+    <!-- dead infrastructure -->
+    <rect x="640" y="360" width="280" height="44" rx="8" fill="none" stroke="#898781" stroke-dasharray="5 4"/>
+    <text x="780" y="378" font-size="11.5" fill="#c3c2b7" text-anchor="middle">Postgres — schema + migration exist</text>
+    <text x="780" y="394" font-size="10.5" fill="#898781" text-anchor="middle">no application code reads or writes</text>
+
+    <rect x="640" y="418" width="280" height="44" rx="8" fill="none" stroke="#898781" stroke-dasharray="5 4"/>
+    <text x="780" y="436" font-size="11.5" fill="#c3c2b7" text-anchor="middle">experimental/ — quarantined</text>
+    <text x="780" y="452" font-size="10.5" fill="#898781" text-anchor="middle">zero call sites, no performance claims</text>
+
+    <!-- research lane -->
+    <rect x="40" y="520" width="880" height="78" rx="10" fill="#222221" stroke="rgba(255,255,255,0.10)"/>
+    <text x="52" y="540" font-size="11" fill="#898781" letter-spacing="1">QUANT/ — OFFLINE RESEARCH PACKAGE (NO NETWORK AT RUNTIME)</text>
+
+    <rect x="90" y="550" width="100" height="30" rx="6" fill="#2c2c2a"/>
+    <text x="140" y="569" font-size="11.5" fill="#ffffff" text-anchor="middle">data/SPY.csv</text>
+    <line x1="190" y1="565" x2="204" y2="565" stroke="#d95926" stroke-width="1.5" marker-end="url(#aOrange)"/>
+    <rect x="206" y="550" width="88" height="30" rx="6" fill="#2c2c2a"/>
+    <text x="250" y="569" font-size="11.5" fill="#ffffff" text-anchor="middle">quant.data</text>
+    <line x1="294" y1="565" x2="308" y2="565" stroke="#d95926" stroke-width="1.5" marker-end="url(#aOrange)"/>
+    <rect x="310" y="550" width="120" height="30" rx="6" fill="#2c2c2a"/>
+    <text x="370" y="569" font-size="11.5" fill="#ffffff" text-anchor="middle">quant.strategies</text>
+    <line x1="430" y1="565" x2="444" y2="565" stroke="#d95926" stroke-width="1.5" marker-end="url(#aOrange)"/>
+    <rect x="446" y="550" width="114" height="30" rx="6" fill="#2c2c2a"/>
+    <text x="503" y="569" font-size="11.5" fill="#ffffff" text-anchor="middle">quant.backtest</text>
+    <line x1="560" y1="565" x2="574" y2="565" stroke="#d95926" stroke-width="1.5" marker-end="url(#aOrange)"/>
+    <rect x="576" y="550" width="104" height="30" rx="6" fill="#2c2c2a"/>
+    <text x="628" y="569" font-size="11.5" fill="#ffffff" text-anchor="middle">quant.metrics</text>
+    <line x1="680" y1="565" x2="694" y2="565" stroke="#d95926" stroke-width="1.5" marker-end="url(#aOrange)"/>
+    <rect x="696" y="550" width="168" height="30" rx="6" fill="#2c2c2a"/>
+    <text x="780" y="569" font-size="11.5" fill="#ffffff" text-anchor="middle">python -m quant.report</text>
+    <text x="480" y="592" font-size="10.5" fill="#898781" text-anchor="middle">costs charged per side · fills at open t+1 · numbers pinned by a golden test</text>
+
+    <!-- legend -->
+    <line x1="40" y1="622" x2="66" y2="622" stroke="#3987e5" stroke-width="1.5"/>
+    <text x="72" y="626" font-size="11" fill="#898781">live path</text>
+    <line x1="150" y1="622" x2="176" y2="622" stroke="#898781" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="182" y="626" font-size="11" fill="#898781">optional, inert, or never used</text>
+    <line x1="356" y1="622" x2="382" y2="622" stroke="#d95926" stroke-width="1.5"/>
+    <text x="388" y="626" font-size="11" fill="#898781">offline research lane</text>
+    <text x="932" y="626" font-size="11" fill="#898781" text-anchor="end">no risk layer, no observability, no feature pipeline — see docs/roadmap.md</text>
+  </g>
+</svg>
