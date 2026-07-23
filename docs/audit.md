@@ -113,6 +113,14 @@ either — the `trades` table exists but no code writes to it (§5). Mitigating:
 - No error normalization anywhere: any yfinance/Redis/Alpaca/Anthropic failure surfaces as a
   raw 500.
 - `alpaca-trade-api` is the deprecated SDK (superseded by `alpaca-py`).
+- Verified during this audit: a fresh install of the v0.1 pins cannot boot at all —
+  `anthropic==0.35.0` passes `proxies=` to httpx, which pip resolves to ≥0.28 (the pin list
+  omits transitive deps), raising `TypeError` at import. Fixed on this branch by pinning
+  `httpx==0.27.2`.
+- Also verified: with empty Alpaca keys, `tradeapi.REST('')` raises `ValueError` while
+  `routes_trade` is imported (`trade_service.py:9` at v0.1) — so a keyless v0.1 deployment
+  could not boot even with the FinBERT download available. Fixed on this branch by
+  constructing the client on first use.
 
 ## 7. What is genuinely sound
 
