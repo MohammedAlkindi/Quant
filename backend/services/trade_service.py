@@ -5,8 +5,15 @@ from backend.config import get_settings
 
 class TradeService:
     def __init__(self):
-        settings = get_settings()
-        self.client = tradeapi.REST(settings.alpaca_api_key, settings.alpaca_secret_key, settings.alpaca_base_url)
+        # Constructed lazily: tradeapi.REST raises on empty keys, which must not block boot.
+        self._client = None
+
+    @property
+    def client(self):
+        if self._client is None:
+            settings = get_settings()
+            self._client = tradeapi.REST(settings.alpaca_api_key, settings.alpaca_secret_key, settings.alpaca_base_url)
+        return self._client
 
     def execute_trade(self, ticker: str, side: str, qty: float, confirmed: bool, stop_loss_pct: float | None = 0.02) -> dict:
         if not confirmed:
