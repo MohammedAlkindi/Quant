@@ -1,0 +1,19 @@
+# Alpaca SDK overlay, needed only for /trade/execute and /portfolio.
+#
+# alpaca-trade-api pins websockets<11 while modern yfinance/polygon need >=13/>=14,
+# so pip cannot resolve them together and installing alpaca normally downgrades
+# websockets and breaks yfinance at import. The REST paths this repo uses don't
+# touch the conflicting streaming code (verified: imports and keyless boot pass
+# under websockets 16), so alpaca is installed WITHOUT its dependency resolution,
+# with its actual support deps listed here explicitly.
+#
+# Install AFTER requirements.txt, in this order:
+#   pip install -r requirements-broker.txt
+#   pip install --no-deps alpaca-trade-api==3.2.0
+#
+# The SDK is deprecated upstream in favor of alpaca-py; swapping is future work.
+aiohttp==3.14.3
+deprecation==2.1.0
+msgpack==1.0.3
+PyYAML==6.0.1
+websocket-client==1.9.0

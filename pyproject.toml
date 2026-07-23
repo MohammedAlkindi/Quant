@@ -1,0 +1,50 @@
+# Packaging for the installable `quant` research package plus repo-wide tooling
+# (ruff, pytest). Runtime deps stay pinned in requirements*.txt; backend/, ml/,
+# and experimental/ are intentionally not packaged.
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "quant"
+version = "0.1.0"
+description = "Personal trading scaffold: heuristic-signal API plus a cost-aware baseline backtester"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2",
+    "ruff>=0.5",
+    "matplotlib>=3.8",
+]
+
+[tool.setuptools.packages.find]
+include = ["quant*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["frontend"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["backend", "experimental", "ml", "quant"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Query", "pydantic.Field"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

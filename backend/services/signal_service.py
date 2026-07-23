@@ -11,7 +11,7 @@ class SignalService:
         if len(close_series) < 2:
             return {'ticker': ticker, 'recommendation': 'HOLD', 'confidence': 0.5, 'reason': 'insufficient-data'}
         momentum = (close_series[-1] - close_series[-5]) / max(close_series[-5], 1e-6) if len(close_series) >= 5 else 0.0
-        lstm_prediction = float(close_series[-1] * (1 + momentum * 0.2))
+        momentum_projection = float(close_series[-1] * (1 + momentum * 0.2))
         rl_action = get_rl_action(close_series)
         anomaly = detect_anomaly(close_series.tolist())
         sentiment = aggregate_sentiment(ticker)
@@ -25,7 +25,7 @@ class SignalService:
 
         return {
             'ticker': ticker,
-            'lstm_prediction': lstm_prediction,
+            'momentum_projection': momentum_projection,
             'rl_action': rl_action,
             'anomaly_flags': anomaly,
             'sentiment_score': sentiment,
