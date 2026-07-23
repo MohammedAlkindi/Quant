@@ -9,7 +9,7 @@ service = LLMService()
 
 class AnalyzeRequest(BaseModel):
     ticker: str
-    lstm_prediction: float
+    momentum_projection: float
     rl_action: str
     anomaly_flags: dict
     sentiment_score: float
