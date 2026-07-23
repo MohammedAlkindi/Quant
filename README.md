@@ -28,8 +28,9 @@ lives in [`experimental/`](experimental/README.md) with its defects labeled.
 - A PPO hook loads `ml/models/checkpoints/ppo_agent.zip` if present. No checkpoint ships
   with the repo, so the RL vote is always `hold`. The only training script for it lives in
   `experimental/` because it trains on synthetic data.
-- Both dependencies load lazily: a keyless deployment never imports torch, transformers, or
-  stable-baselines3.
+- Both dependencies load lazily and live in `requirements-ml.txt`: a keyless deployment
+  never imports torch, transformers, or stable-baselines3, and the core install doesn't
+  even download them.
 
 **Experimental — quarantined, unvalidated, not in any working path**
 
@@ -134,7 +135,8 @@ Backend, locally (Python 3.11+):
 ```bash
 python -m venv .venv
 .venv/Scripts/activate          # Windows; use .venv/bin/activate on Unix
-pip install -r requirements.txt
+pip install -r requirements.txt # core API deps; add -r requirements-ml.txt for FinBERT/PPO
+pip install -e ".[dev]"         # quant research package + pytest + ruff
 cp .env.example .env            # then fill in the keys you have
 uvicorn backend.main:app --reload
 ```
@@ -163,15 +165,21 @@ Notes:
 
 ## Tests
 
-There is no test suite on `main` yet. This branch adds pytest, ruff, CI, and a cost-aware
-baseline backtest — sections below will be filled in as they land on the branch.
+```bash
+pytest          # runs everything under tests/
+ruff check .    # lint
+```
+
+GitHub Actions runs both on every push and pull request
+([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). Deterministic randomness goes
+through `quant.seeds.set_seed`.
 
 ## v0.2 roadmap (this branch)
 
 1. ~~Audit claims vs. code~~ → [`docs/audit.md`](docs/audit.md)
 2. ~~Quarantine unwired model code~~ → [`experimental/`](experimental/README.md)
 3. ~~This README~~
-4. Packaging (`pyproject.toml`), ruff, pytest, deterministic seeds, GitHub Actions CI
+4. ~~Packaging (`pyproject.toml`), ruff, pytest, deterministic seeds, GitHub Actions CI~~
 5. A `quant/` research package: buy-and-hold and moving-average-crossover baselines through
    a backtest that charges commissions, spread, and slippage, executes with a one-day delay,
    and reports out-of-sample Sharpe, max drawdown, turnover, and total return against SPY
