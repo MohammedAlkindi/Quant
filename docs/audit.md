@@ -121,6 +121,16 @@ either — the `trades` table exists but no code writes to it (§5). Mitigating:
   `routes_trade` is imported (`trade_service.py:9` at v0.1) — so a keyless v0.1 deployment
   could not boot even with the FinBERT download available. Fixed on this branch by
   constructing the client on first use.
+- Also verified: the pinned `yfinance==0.2.43` can no longer reach Yahoo at all
+  ("Expecting value: line 1 column 1" on every request — Yahoo's API moved on), which kills
+  every market-data endpoint and the signal path of v0.1 as of 2026-07. Fixed on this
+  branch by bumping to `yfinance==1.5.1` (and `polygon-api-client==1.16.3`).
+- Consequence of the bump: `alpaca-trade-api==3.2.0` pins `websockets<11` while modern
+  yfinance/polygon require `>=13`/`>=14` — pip cannot resolve the three together, and
+  installing alpaca normally downgrades websockets and breaks yfinance at import
+  (`websockets.sync` missing). Resolved by making the broker SDK an optional `--no-deps`
+  overlay (`requirements-broker.txt`) with a lazy import; verified in a clean venv that
+  yfinance 1.5.1, alpaca 3.2.0, and websockets 16 coexist and the backend boots keyless.
 
 ## 7. What is genuinely sound
 
