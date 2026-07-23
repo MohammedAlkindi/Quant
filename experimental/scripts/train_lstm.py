@@ -2,8 +2,8 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from ml.models.lstm import PriceLSTM
-from ml.models.trainer import train_model
+from experimental.models.lstm import PriceLSTM
+from experimental.models.trainer import train_model
 
 
 def make_dataset(points=500, seq=60, feat=8):

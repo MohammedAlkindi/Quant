@@ -1,6 +1,6 @@
 import pandas as pd
 
-from ml.features.technical import add_technical_features
+from experimental.features.technical import add_technical_features
 
 
 def build_feature_matrix(candles: list[dict]) -> pd.DataFrame:
