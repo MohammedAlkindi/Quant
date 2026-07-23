@@ -1,10 +1,14 @@
+# Packaging for the installable `quant` research package plus repo-wide tooling
+# (ruff, pytest). Runtime deps stay pinned in requirements*.txt; backend/, ml/,
+# and experimental/ are intentionally not packaged.
+
 [build-system]
 requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "quant"
-version = "0.2.0"
+version = "0.1.0"
 description = "Personal trading scaffold: heuristic-signal API plus a cost-aware baseline backtester"
 readme = "README.md"
 license = { text = "MIT" }
@@ -18,6 +22,7 @@ dependencies = [
 dev = [
     "pytest>=8.2",
     "ruff>=0.5",
+    "matplotlib>=3.8",
 ]
 
 [tool.setuptools.packages.find]
