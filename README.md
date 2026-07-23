@@ -1,226 +1,134 @@
 # Quant
 
-Quant is an MVP scaffold for a personal trading dashboard: a FastAPI backend that serves
-market data, computes a **heuristic** trading signal, asks Claude for commentary, and can
-submit orders to an **Alpaca paper account**. It is not a production system, it contains no
-validated alpha, and nothing in it should be pointed at real money.
+Research-first quantitative trading scaffold: a cost-aware, out-of-sample backtesting lane
+and a FastAPI market-data/signal service, with every claim pinned to code, tests, or a
+reproducible run.
 
-This branch (v0.2) exists to make the repo's claims match its code. The full gap analysis of
-v0.1 is in [`docs/audit.md`](docs/audit.md); code that was never wired into anything now
-lives in [`experimental/`](experimental/README.md) with its defects labeled.
+<p align="center">
+  <img src="docs/assets/hero.svg" alt="Quant — a research-first trading scaffold" width="840">
+</p>
 
-## Status
+<p align="center">
+  <a href="https://github.com/MohammedAlkindi/Quant/actions/workflows/ci.yml"><img src="https://github.com/MohammedAlkindi/Quant/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11%2B-3776ab" alt="Python 3.11+"></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fastral-sh%2Fruff%2Fmain%2Fassets%2Fbadge%2Fv2.json" alt="Ruff"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-2ea44f" alt="License: MIT"></a>
+</p>
 
-**Implemented and working**
+## The problem this solves
 
-- FastAPI service: market data (yfinance always; Polygon and Alpha Vantage when keys are
-  set), a heuristic signal endpoint, Claude-backed `/analyze` and `/explain`, and Alpaca
-  paper-trading calls behind a `confirmed=true` flag.
-- Redis caching for `/quote` only (5-second TTL). History calls are uncached.
-- Anomaly damping: a z-score of the latest close against the 3-month mean, plus an
-  IsolationForest refit per request on price levels. Note the consequence: fresh 3-month
-  highs and lows are flagged as "anomalous" by construction.
+Personal trading repos routinely claim what their code cannot do — "LSTM forecasting" that
+never runs, backtests with no costs, "production-ready" over zero tests. This repo's own
+v0.1 failed that bar, and the full audit is committed at [`docs/audit.md`](docs/audit.md)
+rather than hidden.
 
-**Wired but inert by default**
-
-- FinBERT sentiment runs only if `ALPHA_VANTAGE_API_KEY` is set (headlines come from Alpha
-  Vantage news). Without it the sentiment term is silently `0.0`.
-- A PPO hook loads `ml/models/checkpoints/ppo_agent.zip` if present. No checkpoint ships
-  with the repo, so the RL vote is always `hold`. The only training script for it lives in
-  `experimental/` because it trains on synthetic data.
-- Both dependencies load lazily and live in `requirements-ml.txt`: a keyless deployment
-  never imports torch, transformers, or stable-baselines3, and the core install doesn't
-  even download them.
-
-**Experimental — quarantined, unvalidated, not in any working path**
-
-- Everything in [`experimental/`](experimental/README.md): LSTM/Transformer definitions
-  (never trained on real data), a feature pipeline with zero call sites, an RL training
-  script that fits a synthetic random walk, and the old 14-line backtest with no cost model.
-
-**Not built**
-
-- Authentication of any kind. Every endpoint, including `/trade/execute`, is open.
-- Pre-trade risk checks. See the warning below.
-- Persistence. A Postgres schema and Alembic migration exist; no application code reads or
-  writes them.
-- A runnable frontend. `frontend/src/` holds React component sources only — there is no
-  `package.json`, lockfile, or build config, so it cannot be installed or started. Its
-  WebSocket hook targets an endpoint the backend does not have.
-- Trained models. No checkpoint of any kind is shipped.
-
-## ⚠️ Trading safety
-
-`POST /api/trade/execute` submits a **market order to Alpaca** after checking exactly one
-thing: a `confirmed` boolean. There are no buying-power, position-limit, order-size, symbol,
-or duplicate-submission checks, and no market-hours handling. The `stop_loss` value in the
-response is **informational only — no stop order is ever placed**. The default
-`ALPACA_BASE_URL` is the paper endpoint; do not point this code at a live account.
+v0.1.0 inverts the deal. The base layer is honest and verifiable: a backtest engine that
+charges costs and executes with a one-bar delay, reported numbers pinned to committed data
+by a golden test, a service that documents exactly what its heuristic computes, and
+unvalidated code quarantined where it cannot leak claims. Strategy research can start from
+ground truth instead of aspiration.
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    C[HTTP client] --> N[nginx :80] --> A
+<p align="center">
+  <img src="docs/assets/architecture.svg" alt="Architecture: FastAPI service lane, wired ml components, offline quant research lane, quarantined experimental code" width="900">
+</p>
 
-    subgraph A [FastAPI backend]
-        RM[routes_market] --> MS[MarketService]
-        RS[routes_signal] --> SS[SignalService]
-        RT[routes_trade] --> TS[TradeService]
-        RL[routes_llm] --> LS[LLMService]
-        RS --> MS
-    end
+Three lanes and a quarantine. `backend/` serves market data, a documented heuristic
+signal, Claude commentary, and Alpaca paper-trade calls — it boots keyless, and heavy SDKs
+(torch, transformers, the broker SDK) are lazy opt-in overlays. `quant/` is the offline
+research lane: vendored data → strategies → cost-aware engine → metrics → report,
+deterministic end to end. `ml/` holds the components genuinely wired into the signal;
+`experimental/` holds everything that is not, [labeled with its
+defects](experimental/README.md).
 
-    MS --> YF[yfinance]
-    MS -->|quotes, 5s TTL| RD[(Redis)]
-    MS -.->|if key set| PG[Polygon]
-    MS -.->|if key set| AV[Alpha Vantage]
+Module boundaries, the signal formula, the endpoint table, and environment variables:
+[`docs/architecture.md`](docs/architecture.md).
 
-    SS --> AD[anomaly detector<br/>z-score + IsolationForest]
-    SS -.->|no checkpoint: hold| PPO[PPO hook]
-    SS -.->|no AV key: 0.0| FB[FinBERT sentiment]
-    FB -.-> AV
+## Quickstart
 
-    TS --> AL[Alpaca paper API]
-    LS --> CL[Claude API]
-
-    DB[(Postgres<br/>schema only, never written)]
-    FE[frontend/src<br/>sources only, no build]
-
-    style DB stroke-dasharray: 5 5
-    style FE stroke-dasharray: 5 5
-```
-
-### What the signal actually is
-
-`SignalService.predict` computes, from ~3 months of daily closes:
-
-```
-momentum = close[-1] / close[-5] - 1            # return over the last 4 sessions
-score    = 0.4·tanh(3·momentum) + 0.3·sentiment + 0.3·rl_vote
-score    = score / 2 if anomaly flagged
-signal   = BUY if score > 0.2, SELL if score < -0.2, else HOLD
-```
-
-`confidence` is `clip(|score|, 0.5, 0.99)` — a clamped score magnitude, **not** a calibrated
-probability. In the default keyless deployment, sentiment and rl_vote are both 0, so the
-system reduces to a momentum threshold that emits BUY/SELL only when the 4-session return
-exceeds ±18.3% — in practice, it says HOLD. The `momentum_projection` field in the response
-is `close · (1 + 0.2·momentum)`, plain arithmetic (it was misleadingly named
-`lstm_prediction` in v0.1).
-
-No claim is made that this signal has predictive value. It has never been backtested.
-
-## API endpoints
-
-| Endpoint | What it does |
-|---|---|
-| `GET /api/prices/{ticker}` | 30 days of candles (Polygon if keyed, else yfinance) + Alpha Vantage fundamentals if keyed |
-| `GET /api/quote/{ticker}` | Latest price; Redis-cached 5 s |
-| `GET /api/history/{ticker}` | yfinance OHLCV (auto-adjusted) |
-| `POST /api/signal/predict` | The heuristic signal above |
-| `GET /api/anomaly/{ticker}` | Runs the full signal pipeline, returns only the anomaly flags |
-| `POST /api/trade/execute` | Alpaca market order — read the safety warning; needs the broker overlay installed |
-| `GET /api/portfolio` | Alpaca account equity, cash, positions; needs the broker overlay installed |
-| `POST /api/analyze` | Claude commentary on a signal payload |
-| `POST /api/explain` | Claude commentary on an arbitrary client-supplied context dict |
-
-Errors are not normalized: any upstream failure (yfinance, Redis, Alpaca, Anthropic)
-surfaces as an unhandled 500.
-
-## Setup
-
-Backend, locally (Python 3.11+):
+From a clean clone, no API keys required:
 
 ```bash
+git clone https://github.com/MohammedAlkindi/Quant.git && cd Quant
 python -m venv .venv
-.venv/Scripts/activate          # Windows; use .venv/bin/activate on Unix
-pip install -r requirements.txt # core API deps
-pip install -e ".[dev]"         # quant research package + pytest + ruff
-cp .env.example .env            # then fill in the keys you have
-uvicorn backend.main:app --reload
+.venv/Scripts/activate            # Windows; use .venv/bin/activate on Unix
+pip install -r requirements.txt   # core API deps
+pip install -e ".[dev]"           # quant research package + pytest + ruff + matplotlib
+cp .env.example .env              # empty keys are fine — the service boots keyless
+
+uvicorn backend.main:app --reload # http://127.0.0.1:8000/healthz -> {"status":"ok"}
+pytest                            # full suite
+python -m quant.report            # reproduces the backtest table below, offline
 ```
 
-Optional overlays:
+With no keys, signals degrade exactly as documented (sentiment 0.0, RL vote `hold`) and
+`/trade` + `/analyze` fail at call time. Optional overlays:
+[`requirements-ml.txt`](requirements-ml.txt) enables FinBERT/PPO;
+[`requirements-broker.txt`](requirements-broker.txt) enables the Alpaca endpoints (read
+its header — the install is deliberately two-step).
 
-- **Broker** (`/trade`, `/portfolio`): `pip install -r requirements-broker.txt` then
-  `pip install --no-deps alpaca-trade-api==3.2.0`. The two-step dance exists because the
-  deprecated Alpaca SDK pins `websockets<11` while modern yfinance needs `>=13`; the file
-  header documents it.
-- **ML** (`FinBERT`, PPO, `experimental/`): `pip install -r requirements-ml.txt`.
+## Baseline backtest — out of sample
 
-Notes:
+<p align="center">
+  <img src="docs/assets/equity_curve.png" alt="Out-of-sample equity curves, 2020-01-02 to 2026-07-22: SPY buy and hold ends at $255k, MA crossover 10/200 at $195k with shallower drawdowns" width="900">
+</p>
 
-- `POSTGRES_URL` and `REDIS_URL` must be set (the settings model requires them), but
-  Postgres is never contacted and Redis only on `/quote`. The `.env.example` values satisfy
-  boot.
-- With no API keys, the service runs: signals degrade as described above, `/trade` and
-  `/analyze` fail at call time.
-- `docker-compose` (in `infra/`) starts api + redis + postgres + nginx, but pip-installs the
-  full requirements on every container start and injects `.env.example` (empty keys) as the
-  environment. The `frontend` service cannot start (no `package.json`). Treat compose as a
-  sketch, not a deployment.
-
-## Environment variables
-
-| Variable | Needed for | Source |
-|---|---|---|
-| `POSTGRES_URL`, `REDIS_URL` | Boot (required by settings); Redis used by `/quote` | `.env.example` defaults work locally |
-| `POLYGON_API_KEY` | Optional quotes/candles upgrade | polygon.io |
-| `ALPHA_VANTAGE_API_KEY` | Fundamentals + news headlines (enables FinBERT sentiment) | alphavantage.co |
-| `ALPACA_API_KEY`, `ALPACA_SECRET_KEY`, `ALPACA_BASE_URL` | `/trade`, `/portfolio` — keep the paper URL | alpaca.markets |
-| `ANTHROPIC_API_KEY`, `CLAUDE_MODEL` | `/analyze`, `/explain` | console.anthropic.com |
-
-## Baseline backtest (out of sample)
-
-```bash
-python -m quant.report    # reproduces everything in this section from committed data
-```
-
-Data: `data/SPY.csv` — daily OHLCV, split- and dividend-adjusted (so buy-and-hold
-approximates total return), 1993-01-29 → 2026-07-22, fetched 2026-07-23 with yfinance 1.5.1
-(`scripts/fetch_data.py`). The snapshot is committed, so results reproduce offline;
-refetching shifts adjusted history and therefore the numbers.
-
-Protocol: parameters were selected only on 1993–2019 (MA pair from a 3×3 grid by net
-in-sample Sharpe → 10/200); 2020-01-02 → 2026-07-22 is untouched evaluation data. Signals
-form on the close, fill at the next open, and pay 2 bps per side (0.5 commission + 0.5
-half-spread + 1.0 slippage — deliberately conservative for SPY). Long-only, unlevered,
-fractional shares, $100,000 initial equity, Sharpe at rf=0.
+Parameters were chosen on 1993–2019 only (3×3 grid by net in-sample Sharpe → 10/200);
+2020-01-02 → 2026-07-22 is untouched evaluation data. Signals form on the close, fill at
+the **next open**, and pay **2 bps per side** (0.5 commission + 0.5 half-spread + 1.0
+slippage). Long-only, unlevered, $100,000 start, dividend-adjusted SPY, Sharpe at rf=0.
 
 | Strategy | Total return | CAGR | Sharpe (rf=0) | Max drawdown | Turnover/yr | Costs paid | Trades |
 |---|---|---|---|---|---|---|---|
 | SPY buy & hold (benchmark) | +155.26% | +15.44% | 0.81 | −33.72% | 0.10× | $20 | 1 |
 | MA crossover 10/200 | +94.60% | +10.74% | 0.83 | −20.51% | 1.88× | $337 | 13 |
 
-Read it straight: over this window the crossover **underperforms buy-and-hold on total
-return** and wins on drawdown — the standard trend-following tradeoff. No alpha is claimed.
-These are baselines for anything `experimental/` might one day graduate into, and the
-numbers are pinned to the committed data by a golden test.
+Read it straight: the crossover **underperforms buy-and-hold on total return** and wins on
+drawdown — the standard trend-following tradeoff. No alpha is claimed; these are the
+baselines future work must beat. Methodology, benchmark rationale, limitations, and
+reproduction commands: [`docs/backtest.md`](docs/backtest.md). The table is enforced
+against the committed data by [`tests/test_report_golden.py`](tests/test_report_golden.py).
 
-## Tests
+## Project structure
 
-```bash
-pytest          # runs everything under tests/
-ruff check .    # lint
+```
+backend/            FastAPI service: routes → services → data clients
+ml/                 signal components wired into the API (anomaly, RL hook, FinBERT)
+quant/              offline research: loader, strategies, cost-aware engine, metrics, report
+experimental/       quarantined unvalidated code — zero call sites, defects labeled
+tests/              engine accounting, portfolio math, signals, golden reproduction
+data/SPY.csv        committed adjusted daily history (provenance in docs/backtest.md)
+scripts/            fetch_data.py, plot_equity.py
+docs/               audit, architecture, backtest methodology, roadmap, assets
+infra/              docker-compose sketch + nginx config
+frontend/           React sources only — not buildable (no package.json)
 ```
 
-Coverage: backtest accounting against hand-computed fixtures (delayed fills, per-side
-costs, no-negative-cash, leverage/short rejection), portfolio math (Sharpe, drawdown,
-turnover, CAGR), strategy signals, the live heuristic signal (blend weights, thresholds,
-the anomaly-damping quirk, keyless degeneration), data validation, and a golden test that
-pins the README's backtest table to the committed data. GitHub Actions runs lint and the
-full suite on every push and pull request
-([`.github/workflows/ci.yml`](.github/workflows/ci.yml)). Deterministic randomness goes
-through `quant.seeds.set_seed`.
+## What this is / what this is not
 
-## v0.2 roadmap (this branch)
+**This is**
 
-1. ~~Audit claims vs. code~~ → [`docs/audit.md`](docs/audit.md)
-2. ~~Quarantine unwired model code~~ → [`experimental/`](experimental/README.md)
-3. ~~This README~~
-4. ~~Packaging (`pyproject.toml`), ruff, pytest, deterministic seeds, GitHub Actions CI~~
-5. ~~A `quant/` research package: buy-and-hold and moving-average-crossover baselines through
-   a backtest that charges commissions, spread, and slippage, executes with a one-day delay,
-   and reports out-of-sample Sharpe, max drawdown, turnover, and total return against SPY~~
-6. ~~Tests for backtest accounting, signal calculation, and portfolio math~~
+- A verified-honest base for quant research: cost-aware, delayed-execution backtesting
+  with out-of-sample discipline, numbers a reader can reproduce offline in one command.
+- A keyless-bootable FastAPI service whose signal is documented as the heuristic it is.
+- A repo that audits itself: [`docs/audit.md`](docs/audit.md),
+  [`experimental/README.md`](experimental/README.md), [`docs/roadmap.md`](docs/roadmap.md).
+
+**This is not**
+
+- **A live trading system. Do not point it at real money.** `/trade/execute` checks
+  exactly one thing (`confirmed=true`); there are no buying-power, size, symbol, or
+  duplicate-order checks; the `stop_loss` in the response is informational — no stop order
+  is ever placed. The default broker URL is Alpaca's paper endpoint. Risk controls are the
+  top of the [roadmap](docs/roadmap.md), not a shipped feature.
+- An alpha source. The one strategy beyond buy-and-hold is a canonical baseline, and it
+  trails the benchmark on total return over the test window (table above).
+- A production service — no auth, errors surface as raw 500s, and the Postgres schema has
+  no readers or writers yet.
+- An ML showcase. No trained model ships; everything unvalidated sits in
+  [`experimental/`](experimental/README.md) with its defects listed.
+
+## License
+
+[MIT](LICENSE).
