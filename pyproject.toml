@@ -48,3 +48,6 @@ quote-style = "single"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+# Put the repo root on sys.path so tests can import the unpackaged
+# backend/ (PEP 420 namespace package) alongside the installed quant package.
+pythonpath = ["."]
