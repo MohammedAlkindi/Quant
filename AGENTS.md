@@ -11,10 +11,11 @@ Scope and conduct for AI agents working in Quant. `CLAUDE.md` has project contex
 
 ## Commits
 
-- Stage by explicit file path — never `git add .` or `git add -A`.
-- Conventional commits with a scope, one logical change per commit.
-- No `Co-Authored-By` or any AI attribution lines.
-- Tests and lint must pass before any commit that touches code.
+Format, sizing, attribution and staging discipline are global — see `~/.claude/CLAUDE.md`.
+This repo tightens two of them:
+
+- Conventional commits **always carry a scope** here, not only when it adds clarity.
+- **Lint** must pass too, not just tests, before any commit that touches code.
 
 ## Requires explicit confirmation from the owner
 
