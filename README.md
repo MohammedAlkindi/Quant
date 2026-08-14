@@ -95,6 +95,20 @@ retail rules stop beating buy-and-hold — on this window **none survives even a
 cost**: [`docs/cost-study/results.md`](docs/cost-study/results.md), reproduced offline by
 `python -m quant.cost_study`.
 
+## Forward window — beyond the snapshot
+
+The table above ends at the committed snapshot (2026-07-22) and has been looked
+at; nothing in it is a forward claim anymore. The forward lane
+([`forward/`](forward/README.md)) keeps evaluating the same frozen 10/200
+strategy on bars that postdate every committed decision — vendored IBKR daily
+bars spliced behind a seam check, same engine, same costs, reproduced by
+`python -m quant.forward` and pinned by
+[`tests/test_forward_golden.py`](tests/test_forward_golden.py) — beside a
+pre-registered, append-only decision log scored by `python -m quant.scoring`.
+As of 2026-08-14 the forward window is 16 bars, no cross has fired, and the
+crossover has been long throughout: identical to buy-and-hold at +5.31%. A
+window that short supports no conclusion; the lane exists to accumulate one.
+
 ## Project structure
 
 ```
@@ -104,6 +118,7 @@ quant/              offline research: loader, strategies, cost-aware engine, met
 experimental/       quarantined unvalidated code — zero call sites, defects labeled
 tests/              engine accounting, portfolio math, signals, golden reproductions
 data/SPY.csv        committed adjusted daily history (provenance in docs/backtest.md)
+forward/            forward window: vendored IBKR tail, decision log, connector inventory
 scripts/            fetch_data.py, plot_equity.py
 docs/               audit, architecture, backtest methodology, cost study, roadmap, assets
 infra/              docker-compose sketch + nginx config
