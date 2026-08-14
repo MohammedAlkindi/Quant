@@ -23,9 +23,9 @@ for splits **and** dividends. Verified against the connector's own
 `corp_actions` (last two ex-dividends: 2026-06-18 at $1.903516, 2026-03-20 at
 $1.796999):
 
-| Window | Predicted csv/ibkr ratio | Measured mean (min..max) | n |
+| Window | Predicted csv/ibkr ratio | Measured (ratio, or close error where flagged) | n |
 |---|---|---|---|
-| 2026-06-18 -> 2026-07-22 (after last ex-div) | 1.0 | max abs close diff **$0.000029** | 23 |
+| 2026-06-18 -> 2026-07-22 (after last ex-div) | 1.0 | max absolute close error **$0.000029** | 23 |
 | 2026-03-20 -> 2026-06-17 (one dividend back) | 0.99743101 | 0.99743039 (0.99743030..0.99743045) | 62 |
 | 2026-01-02 -> 2026-03-19 (two dividends back) | 0.99471446 | 0.99471380 (0.99471370..0.99471389) | 53 |
 

@@ -41,7 +41,7 @@ malformed — a malformed entry is never skipped quietly):
 | `signal_bar` | The completed daily bar whose close produced the stance. |
 | `stance` | `LONG` or `FLAT` — what the rule says to hold. |
 | `effective_bar` | The next trading day: the engine's one-bar delay means the stance governs from this bar's open. Pre-registration requires `written_utc` to precede this bar's open. |
-| `horizon_bars` | Scoring horizon. **Fixed at 21 for every entry** (pre-registered 2026-08-14, before any outcome existed). A different horizon is a different rule and would need its own log, stated as such. |
+| `horizon_bars` | Scoring horizon. **Fixed at 21 for every entry** (pre-registered 2026-08-14, before any outcome existed) — the scorer mechanically rejects any other value. A different horizon is a different rule and would need its own log, stated as such. |
 | `falsified_if` | The pre-stated falsifier, in words matching the semantics below. |
 
 Documented context fields (recorded, not scorer-enforced): `instrument`,

@@ -42,11 +42,14 @@ test is the next cross.
 - `ASSESSMENT.md` — what this design can and cannot detect, and on what
   timescale.
 
-No code in this repository calls IBKR or any broker. The tail is fetched
-read-only, interactively, and committed as data with provenance — the
-research lane stays offline and deterministic (`quant/` rules in
-`CLAUDE.md`), and the roadmap's "no IBKR integration" stands: vendored bars
-are data, not an integration.
+No code in this repository calls IBKR, and nothing in the research lane
+(`quant/`, `forward/`) calls any broker — the separate FastAPI service keeps
+its documented Alpaca paper-trade path (`README.md`, "What this is not"),
+which this lane neither uses nor extends. The tail is fetched read-only,
+interactively, and committed as data with provenance — the research lane
+stays offline and deterministic (`quant/` rules in `CLAUDE.md`), and the
+roadmap's "no IBKR integration" stands: vendored bars are data, not an
+integration.
 
 ## Refresh procedure (extending the forward window)
 
