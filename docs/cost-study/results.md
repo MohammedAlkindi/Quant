@@ -39,15 +39,20 @@ Selected parameters (grid winners by net in-sample Sharpe at 2 bps/side):
 
 | Strategy | Selected | Net IS Sharpe | Note |
 |---|---|---|---|
-| MA cross | 10/200 | 0.80 | Same pick as the README baseline |
-| price > SMA | 200 | 0.65 | The canonical "200-day rule" won its grid |
-| Faber TMA | 8 months | 0.82 | The rule picked 8m over Faber's canonical 10m |
-| TS momentum | 12 months | 0.78 | Canonical 12m won |
-| RSI(2) | threshold 10 | 0.67 | |
-| MACD | 12/26/9 | 0.35 | Singleton grid — no search |
-| Bollinger MR | 20d/2σ | 0.43 | Singleton grid — no search |
-| Donchian | 20/10 | 0.41 | Turtle System 1 beat System 2 (55/20) in-sample |
+| MA cross | 10/200 | 0.80 | Same pick as the README baseline; grid is the practitioner set (incl. 50/200 golden cross), not BLB's exact pairs |
+| price > SMA | 200 | 0.65 | The canonical "200-day rule" won its grid; BLB's (1,200) at 0% band — Siegel's version adds a 1% band, not used here |
+| Faber TMA | 8 months | 0.82 | The rule picked 8m over Faber's canonical 10m — this row is a neighbor of Faber's rule, not the rule itself |
+| TS momentum | 12 months | 0.78 | Canonical 12m won; long/cash absolute-momentum form (Antonacci), not MOP's long/short vol-scaled strategy |
+| RSI(2) | threshold 10 | 0.67 | Popularized Connors formulation (5-day-SMA exit); the book also has other exit variants |
+| MACD | 12/26/9 | 0.35 | Singleton grid — 12/26/9 is the industry default; Appel's book presents several parameter sets |
+| Bollinger MR | 20d/2σ | 0.43 | Singleton grid — the naive band-buy is the retail usage; Bollinger himself warns a band tag alone is not a signal |
+| Donchian | 20/10 | 0.41 | Turtle System 1 beat System 2 (55/20) in-sample; close-based, no ATR stops, no skip filter, long only |
 | Halloween | — | 0.61 | No parameters |
+
+All nine citations were verified against the published record after the run; the
+per-source confirmations and every divergence from the canonical specification are in
+the protocol's appended [*Source verification*](protocol.md#appendix--source-verification-appended-2026-08-14-after-the-run)
+section.
 
 ## Break-even table (the study)
 

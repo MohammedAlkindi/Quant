@@ -145,3 +145,61 @@ of acted on.)
   the 17 was an arithmetic slip in the prose. No grid, rule, or specification changed;
   the enumerated table is authoritative. Caught by
   `tests/test_cost_study.py::test_every_registered_grid_is_nonempty_and_pre_registered_size`.
+
+## Appendix — source verification (appended 2026-08-14, after the run)
+
+Registered citations above were written from literature knowledge; each was then
+verified against the published record. This appendix is an append-only annotation:
+per source, what was confirmed and exactly where the implemented rule diverges from
+the canonical version. **No specification changed as a result of this check.** Where
+a divergence exists it was already implied by the registered spec; it is named here
+so it sits beside the reference rather than being discoverable only by reading code.
+
+1. **Brock, Lakonishok & LeBaron (1992)** — confirmed: *Journal of Finance* 47(5),
+   1731–1764; Dow 1897–1986. Their VMA pairs are (1,50), (1,150), (5,150), (1,200),
+   (2,200), each at 0% and 1% bands. `price_vs_sma` implements their short-leg-1 rules
+   (1,50)/(1,150)/(1,200) at the 0% band exactly, as long/cash rather than their
+   buy/sell-day classification. **`ma_cross`'s grid (10/20/50 × 100/150/200) is the
+   repo's practitioner grid — including the 50/200 golden cross — not BLB's five
+   pairs**; BLB anchors the rule *family*, not those parameters.
+2. **Siegel, *Stocks for the Long Run*** — confirmed (5th ed.): 200-day rule on the
+   Dow 1886–2012 **with a 1% band on both sides**; his own result (timing 9.73%/yr
+   gross, 8.11% net of costs, vs 9.39% buy-and-hold) reaches this study's conclusion.
+   Divergence: this study uses no band, SPY not the Dow, daily closes.
+3. **Faber (2007)** — confirmed: *Journal of Wealth Management* 9(4), 69 (Spring
+   2007). Canonical rule verbatim: "Buy when monthly price > 10-month SMA. Sell and
+   move to cash when monthly price < 10-month SMA." Implemented identically; the
+   {8, 10, 12} grid is this study's extension, and the selection rule picked **8
+   months, not Faber's canonical 10** (net IS Sharpe 0.82) — the reported OOS row is
+   therefore a neighbor of Faber's rule, not the rule itself.
+4. **Moskowitz, Ooi & Pedersen (2012)** — confirmed: *JFE* 104, 228–250; past
+   12-month excess return predicts. **Their strategy is long/short and
+   volatility-scaled; this study's is long/cash and unscaled** — structurally it is
+   Antonacci's absolute momentum. **Antonacci (2014)** (*Dual Momentum Investing*,
+   McGraw-Hill) — confirmed; his threshold is the T-bill rate and his defensive asset
+   is aggregate bonds; this study uses rf = 0 and cash, as registered.
+5. **Connors & Alvarez (2009)** — confirmed (*Short Term Trading Strategies That
+   Work*). The implemented formulation (long above the 200-day SMA when RSI(2) < 5 or
+   10; exit on a close above the 5-day SMA) matches the popularized Connors RSI(2)
+   treatment (StockCharts ChartSchool attribution, verified 2026-08-14). The book
+   itself presents several exit variants (e.g. RSI(2) > 65); only the 5-day-SMA exit
+   was implemented. Short side omitted.
+6. **Appel (2005)** — confirmed (*Technical Analysis: Power Tools for Active
+   Investors*, FT Prentice Hall; Appel is MACD's creator). **12/26/9 is the
+   industry-standard default parameterization, not a single canonical triple from the
+   book** — Appel presents multiple parameter sets.
+7. **Bollinger (2001)** — confirmed (*Bollinger on Bollinger Bands*, McGraw-Hill;
+   20-day/2σ defaults). **Divergence of intent: Bollinger himself warns "there is
+   absolutely nothing about a tag of a band that in and of itself is a signal."** The
+   naive buy-the-lower-band rule tested here is the popularized retail usage of his
+   indicator, not his recommendation — the citation anchors the indicator, not an
+   endorsement of the rule.
+8. **Faith (2007)** — confirmed (*Way of the Turtle*, McGraw-Hill): System 1 =
+   20-day breakout entry / 10-day exit, System 2 = 55/20 with no skip filter.
+   Divergences: the Turtles entered intraday the moment the level traded, used
+   ATR-based (2N) stops, N-unit pyramiding, and System 1's skip-after-a-winning-trade
+   filter; this study's version decides on the close, is all-in/all-out with no stop
+   and no filter, long only.
+9. **Bouman & Jacobsen (2002)** — confirmed: *American Economic Review* 92(5),
+   1618–1635; November–April vs May–October, 36 of 37 markets. Implemented as
+   registered (calendar months, one-day fill lag).
