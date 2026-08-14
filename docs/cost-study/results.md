@@ -23,6 +23,14 @@ loses (the high-turnover rules give up a further 15–40 pp between 0 and 20 bps
 This is a statement about SPY over one strongly rising window, not about these rules
 everywhere. See *Limits*.
 
+<p align="center">
+  <img src="../assets/cost_degradation.png" alt="Out-of-sample total return vs per-side cost, 2020-01-02 to 2026-07-22: SPY buy and hold flat at +155% across all cost levels; all nine strategy lines sit below it and slope down as cost rises, from TS momentum at +116% to RSI(2) at +9% at 20 bps" width="900">
+</p>
+
+The chart is regenerated from the committed data by
+[`scripts/plot_cost_study.py`](../../scripts/plot_cost_study.py), which reads the same
+`evaluate_study` output the golden test pins — regeneration is byte-identical.
+
 ## Setup (from the protocol, unchanged)
 
 - Engine: `quant.backtest.run_backtest` v0.1.0, unmodified — signal on close *t*, fill
