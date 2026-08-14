@@ -7,7 +7,8 @@ Scope and conduct for AI agents working in Quant. `CLAUDE.md` has project contex
 
 - Never commit to `main`. Work on `<type>/<kebab-description>` branches; agent-initiated
   branches use the `claude/` prefix.
-- Do not merge or delete branches; the owner reviews and merges.
+- Do not delete branches; the owner handles branch cleanup. Merging is covered by the
+  grant below.
 
 ## Commits
 
@@ -22,8 +23,18 @@ This repo tightens two of them:
 - Anything touching the order path (`backend/services/trade_service.py`,
   `backend/api/routes_trade.py`) beyond documentation.
 - Adding live-broker credentials, endpoints, or SDKs; changing `ALPACA_BASE_URL` handling.
-- Pushing to any remote; force-pushing anywhere.
+- Force-pushing anywhere, and any history rewrite.
+- Publishing: releases, packages, repo-visibility changes.
+- Pushing to, or opening PRs against, any repo that is not the owner's.
 - Deleting files outside `experimental/`.
+
+## Allowed without asking (owner grant, 2026-08-14)
+
+- Pushing branches of this repo to `origin`.
+- Merging the owner's own PRs in this repo — **only when CI is green on the head commit
+  and the trailer scan (`commit-guard.js` patterns) is clean**. Branches carrying
+  `forward/decisions/` entries merge by merge commit only, never squash or rebase
+  (`CLAUDE.md`).
 
 ## Standing expectations
 
