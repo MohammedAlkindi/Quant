@@ -1,9 +1,9 @@
 # Roadmap
 
-Direction: the repo description ("cost-aware backtesting, deterministic risk controls,
-broker-independent execution") names where this is headed. As of v0.1.0 the first clause
-is built; risk controls and broker-independence are roadmap items below, not shipped
-features. This file is the honest ledger of that gap.
+Direction: cost-aware backtesting, deterministic risk controls, broker-independent
+execution. As of v0.1.0 only the first is built, and it is the only one the repo
+description claims; risk controls and broker-independence are roadmap items below, not
+shipped features. This file is the honest ledger of that gap.
 
 ## Next — in rough order
 
@@ -13,7 +13,7 @@ features. This file is the honest ledger of that gap.
    check, symbol/side validation, idempotency keys, and a *real* stop order placed with
    the broker (today's `stop_loss` response field is informational only). Deterministic
    and unit-tested, in the spirit of `quant/` — this is the "deterministic risk controls"
-   the description promises, and it gates everything in the out-of-scope list.
+   of the direction above, and it gates everything in the out-of-scope list.
 3. **Auth on mutating endpoints.** `/trade/execute` is currently open to anyone who can
    reach the host.
 4. **Persistence: wire it or drop it.** The Postgres schema and migration exist with zero
