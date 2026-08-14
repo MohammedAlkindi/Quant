@@ -34,7 +34,9 @@ python -m quant.scoring   # score the pre-registered decision log (forward/decis
 - Backtests must charge costs (commission, spread, slippage) and execute with delay; any
   reported metric must be reproducible by one command.
 - `forward/decisions/` is append-only pre-registration: never edit, delete, or reorder an
-  entry, never amend or rebase that directory, never squash-merge a branch carrying
-  entries. Forward results never drive a parameter change (`forward/README.md`).
+  entry, and never amend or rebase that directory. **Any branch carrying
+  `forward/decisions/` entries merges with a merge commit only — never squash, never
+  rebase** — per-entry commit dates are the pre-registration evidence. Forward results
+  never drive a parameter change (`forward/README.md`).
 - README claims are verified before commit; if code and README disagree, fixing the README
   is part of the change.

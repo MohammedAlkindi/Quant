@@ -21,9 +21,10 @@ account.
   timestamp is the pre-registration proof.
 - **Never amend or rebase anything under this directory.** An edited history
   destroys the claim that the prediction predated the outcome.
-- Consequence for merges: a branch carrying entries must reach `main` by
-  merge commit or rebase-merge, **never squash** — squashing collapses the
-  per-entry commit dates into one and destroys the timestamp evidence.
+- Consequence for merges: a branch carrying entries reaches `main` **by
+  merge commit only — never squash, never rebase.** Squashing collapses the
+  per-entry commit dates into one; rebasing re-stamps them. Either destroys
+  the timestamp evidence.
 
 ## Entry schema
 
