@@ -90,6 +90,11 @@ baselines future work must beat. Methodology, benchmark rationale, limitations, 
 reproduction commands: [`docs/backtest.md`](docs/backtest.md). The table is enforced
 against the committed data by [`tests/test_report_golden.py`](tests/test_report_golden.py).
 
+A companion pre-registered study asks at what per-side cost nine commonly recommended
+retail rules stop beating buy-and-hold — on this window **none survives even at zero
+cost**: [`docs/cost-study/results.md`](docs/cost-study/results.md), reproduced offline by
+`python -m quant.cost_study`.
+
 ## Forward window — beyond the snapshot
 
 The table above ends at the committed snapshot (2026-07-22) and has been looked
@@ -109,13 +114,13 @@ window that short supports no conclusion; the lane exists to accumulate one.
 ```
 backend/            FastAPI service: routes → services → data clients
 ml/                 signal components wired into the API (anomaly, RL hook, FinBERT)
-quant/              offline research: loader, strategies, cost-aware engine, metrics, report
+quant/              offline research: loader, strategies, cost-aware engine, metrics, report, cost study
 experimental/       quarantined unvalidated code — zero call sites, defects labeled
-tests/              engine accounting, portfolio math, signals, golden reproduction
+tests/              engine accounting, portfolio math, signals, golden reproductions
 data/SPY.csv        committed adjusted daily history (provenance in docs/backtest.md)
 forward/            forward window: vendored IBKR tail, decision log, connector inventory
 scripts/            fetch_data.py, plot_equity.py
-docs/               audit, architecture, backtest methodology, roadmap, assets
+docs/               audit, architecture, backtest methodology, cost study, roadmap, assets
 infra/              docker-compose sketch + nginx config
 frontend/           React sources only — not buildable (no package.json)
 ```
