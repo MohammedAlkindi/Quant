@@ -139,4 +139,9 @@ of acted on.)
 
 ## Corrections
 
-(None.)
+- **2026-08-14 (same day, before results were recorded):** the registration text says
+  "seventeen in-sample grid variants" and "(plus 17 selection variants)". The grids
+  enumerated in the strategy table sum to **25** (9 + 3 + 3 + 3 + 2 + 1 + 1 + 2 + 1) —
+  the 17 was an arithmetic slip in the prose. No grid, rule, or specification changed;
+  the enumerated table is authoritative. Caught by
+  `tests/test_cost_study.py::test_every_registered_grid_is_nonempty_and_pre_registered_size`.
