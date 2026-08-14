@@ -20,6 +20,7 @@ scorer marks against the spliced SPY series.
 
 import re
 from dataclasses import dataclass
+from datetime import timedelta
 from pathlib import Path
 
 import pandas as pd
@@ -27,6 +28,7 @@ import pandas as pd
 from quant.forward import load_spliced
 
 DECISIONS_DIR = Path('forward') / 'decisions'
+REQUIRED_HORIZON_BARS = 21  # pre-registered 2026-08-14; a different horizon is a different log
 REQUIRED_FIELDS = (
     'entry_id',
     'written_utc',
@@ -80,13 +82,19 @@ def parse_entry(text: str, name: str = '<entry>') -> Entry:
     if fields['stance'] not in STANCES:
         raise ValueError(f'{name}: stance must be one of {STANCES}, got {fields["stance"]!r}')
     try:
+        written = pd.Timestamp(fields['written_utc'])
         signal_bar = pd.Timestamp(fields['signal_bar'])
         effective_bar = pd.Timestamp(fields['effective_bar'])
         horizon_bars = int(fields['horizon_bars'])
     except ValueError as exc:
-        raise ValueError(f'{name}: unparseable date or horizon ({exc})') from exc
-    if horizon_bars < 1:
-        raise ValueError(f'{name}: horizon_bars must be >= 1, got {horizon_bars}')
+        raise ValueError(f'{name}: unparseable timestamp or horizon ({exc})') from exc
+    if written.tzinfo is None or written.utcoffset() != timedelta(0):
+        raise ValueError(f'{name}: written_utc must be an explicit-UTC ISO-8601 timestamp, got {fields["written_utc"]!r}')
+    if horizon_bars != REQUIRED_HORIZON_BARS:
+        raise ValueError(
+            f'{name}: horizon_bars must be {REQUIRED_HORIZON_BARS}, the pre-registered horizon '
+            f'(a different horizon is a different log), got {horizon_bars}'
+        )
     if effective_bar <= signal_bar:
         raise ValueError(f'{name}: effective_bar must fall after signal_bar')
     return Entry(
