@@ -20,6 +20,8 @@ those patterns.
 pytest                    # all tests (venv: .venv)
 ruff check .              # lint
 python -m quant.report    # reproduce the baseline backtest + metrics
+python -m quant.forward   # frozen baseline on the post-snapshot forward window
+python -m quant.scoring   # score the pre-registered decision log (forward/decisions/)
 ```
 
 ## Rules
@@ -31,5 +33,8 @@ python -m quant.report    # reproduce the baseline backtest + metrics
   live-trading behavior without being explicitly asked.
 - Backtests must charge costs (commission, spread, slippage) and execute with delay; any
   reported metric must be reproducible by one command.
+- `forward/decisions/` is append-only pre-registration: never edit, delete, or reorder an
+  entry, never amend or rebase that directory, never squash-merge a branch carrying
+  entries. Forward results never drive a parameter change (`forward/README.md`).
 - README claims are verified before commit; if code and README disagree, fixing the README
   is part of the change.
